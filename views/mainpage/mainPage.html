@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CoumtriesApi</title>
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <div id="nav">
+      <h1>CoutriesApi</h1>
+      <a href="https://github.com/shnki/countriesapi"> Github </a>
+      <a href="#countriesSpace" onclick="countriesSpace()">
+        Supported Countries
+      </a>
+    </div>
+    <div class="hero">
+      <h1 id="title">CoutriesApi</h1>
+      <p>Example Request</p>
+      <h1 id="heroText"></h1>
+      <p>Example Response</p>
+      <pre><code>
+        {
+            "status": 200,
+            "data": {
+                "name": "Egypt",
+                "code": "EG",
+                "timezone": "Egypt Standard Time",
+                "utc": "UTC+02:00",
+                "mobileCode": "+20",
+                "flag": "http://localhost:8080/flags/eg.png"
+            }
+        }
+        </code></pre>
+    </div>
+    <div id="countriesSpace"></div>
+    <script>
+      let hostname = location.hostname;
+      document.getElementById("heroText").innerHTML =
+        "https://" + hostname + "/api/countries/EG";
+      async function getCountries() {
+        const response = await fetch("http://localhost:8080/api/countries/all");
+        const countries = await response.json();
+        countries.map((country) => {
+          const countriesSpace = document.getElementById("countriesSpace");
+          const child = `<div class="countryContainer">
+        <img src="/flags/${country.code}.png" width="200" height="150" />
+        <div>
+          <h1>${country.name}</h1>
+          <h1>Code: ${country.code}</h1>
+          <h1>Mobile Code: ${country.mobileCode}</h1>
+          <h1 style="border: 0px">${country.utc}</h1>
+        </div>
+      </div>`;
+          countriesSpace.insertAdjacentHTML("beforeend", child);
+        });
+      }
+      getCountries();
+      function scrollToCountries() {
+        const countriesSpace = document.getElementById("countriesSpace");
+        countriesSpace.scrollIntoView({ behavior: "smooth" });
+      }
+    </script>
+  </body>
+</html>
