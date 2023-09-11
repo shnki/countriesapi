@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const countryList = require("./data.js");
+router.use(express.static("public"));
 router.get("/:country", async (req, res) => {
   if (req.params.country === "all") {
     try {
