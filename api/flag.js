@@ -4,7 +4,10 @@ const path = require("path");
 
 router.get("/:country", (req, res) => {
   res.sendFile(
-    path.join(__dirname + `./../public/flags/${req.params.country}.png`)
+    path.join(
+      __dirname +
+        `./../public/flags/${req.params.country.toLocaleLowerCase}.png`
+    )
   );
 });
 
