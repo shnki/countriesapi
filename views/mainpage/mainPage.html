@@ -108,6 +108,7 @@
     </div>
     <div id="countriesSpace"></div>
     <script>
+      console.log(location.protocol + "//" + location.host);
       let hostname = location.hostname;
       document.getElementById("heroText").innerHTML =
         "https://" + hostname + "/api/countries/EG";
@@ -117,14 +118,16 @@
         countries.map((country) => {
           const countriesSpace = document.getElementById("countriesSpace");
           const child = `<div class="countryContainer">
-        <img src="/flag/${country.code}" width="200" height="150" />
-        <div>
-          <h1>${country.name}</h1>
-          <h1>Code: ${country.code}</h1>
-          <h1>Mobile Code: ${country.mobileCode}</h1>
-          <h1 style="border: 0px">${country.utc}</h1>
-        </div>
-      </div>`;
+              <img src="${location.protocol + "//" + location.host}/flag/${
+            country.code
+          }" width="200" height="150" />
+              <div>
+                <h1>${country.name}</h1>
+                <h1>Code: ${country.code}</h1>
+                <h1>Mobile Code: ${country.mobileCode}</h1>
+                <h1 style="border: 0px">${country.utc}</h1>
+              </div>
+            </div>`;
           countriesSpace.insertAdjacentHTML("beforeend", child);
         });
       }
