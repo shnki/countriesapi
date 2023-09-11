@@ -118,9 +118,9 @@
         countries.map((country) => {
           const countriesSpace = document.getElementById("countriesSpace");
           const child = `<div class="countryContainer">
-              <img src="${location.protocol + "//" + location.host}/flag/${
-            country.code
-          }" width="200" height="150" />
+              <img src="${
+                location.protocol + "//" + location.host
+              }/flag/${country.code.toLowerCase()}" width="200" height="150" />
               <div>
                 <h1>${country.name}</h1>
                 <h1>Code: ${country.code}</h1>
