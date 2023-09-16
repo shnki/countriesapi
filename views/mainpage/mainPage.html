@@ -54,6 +54,32 @@
         color: blue;
         font-size: 4rem;
       }
+      .game {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        padding: 10px;
+        background: rgb(255, 235, 205);
+        background: linear-gradient(
+          90deg,
+          rgba(255, 235, 205, 1) 0%,
+          rgba(251, 215, 161, 1) 100%
+        );
+      }
+      .game h1 {
+        font-weight: lighter;
+        font-family: cursive;
+        color: black;
+      }
+      .game button {
+        color: yellow;
+        width: min-content;
+        background-color: blue;
+        -webkit-text-stroke: 0.5px yellow;
+        border-color: blue;
+        cursor: pointer;
+      }
       .container {
         max-width: 10%;
       }
@@ -76,6 +102,7 @@
         flex-wrap: wrap;
         justify-content: center;
         gap: 10px;
+        padding-top: 10px;
       }
     </style>
   </head>
@@ -105,6 +132,10 @@
             }
         }
         </code></pre>
+      <div class="game">
+        <h1>Do you think you know much about flags ?</h1>
+        <button>TEST YOUR KNOWLEDGE</button>
+      </div>
     </div>
     <div id="countriesSpace"></div>
     <script>
