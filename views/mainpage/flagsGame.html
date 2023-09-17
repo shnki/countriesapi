@@ -8,15 +8,90 @@
       body {
         background-color: brown;
       }
+      .buttonsContainer {
+        padding: 10px;
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+      }
+      .buttonsContainer button {
+        width: 360px;
+        padding: 10px;
+      }
       .container {
         display: flex;
+        flex-direction: column;
         justify-content: center;
         align-items: center;
-        background-color: blue;
       }
     </style>
   </head>
   <body>
-    <div class="container">hi</div>
+    <div class="container">
+      <h1 id="score">socre</h1>
+      <img
+        id="flagImage"
+        alt="Flag image"
+        src="http://localhost:8080/flag/ax"
+        width="360px"
+      />
+      <div class="buttonsContainer">
+        <button id="btn1" onclick="answer(this.id)">me</button>
+        <button id="btn2" onclick="answer(this.id)">click me</button>
+        <button id="btn3" onclick="answer(this.id)">click me</button>
+        <button id="btn4" onclick="answer(this.id)">click me</button>
+      </div>
+    </div>
+    <script>
+      let score = 0;
+      async function getCountries() {
+        const response = await fetch("api/countries/all");
+        const countries = await response.json();
+        const btn1 = document.getElementById("btn1");
+        const btn2 = document.getElementById("btn2");
+        const btn3 = document.getElementById("btn3");
+        const btn4 = document.getElementById("btn4");
+
+        randomizeAnswers([btn1, btn2, btn3, btn4], countries);
+      }
+      getCountries();
+
+      function randomizeAnswers(buttonsArr, countriesArr) {
+        const flagImage = document.getElementById("flagImage");
+        const randomCountry =
+          countriesArr[Math.floor(Math.random() * countriesArr.length)];
+        const randomButton =
+          buttonsArr[Math.floor(Math.random() * buttonsArr.length)];
+        flagImage.src = `${
+          location.protocol + "//" + location.host
+        }/flag/${randomCountry.code.toLowerCase()}`;
+        const wrongAnswerButtons = buttonsArr.filter(
+          (button) => button !== randomButton
+        );
+        wrongAnswerCountries = countriesArr.filter(
+          (country) => country !== randomCountry
+        );
+
+        const randomizedWrongAnswerCountries = wrongAnswerCountries
+          .sort(() => Math.random() - 0.5)
+          .slice(0, 3);
+
+        for (let i = 0; i < randomizedWrongAnswerCountries.length; i++) {
+          wrongAnswerButtons[i].textContent =
+            randomizedWrongAnswerCountries[i].name;
+          wrongAnswerButtons[i].onclick = () => {
+            score--;
+            document.getElementById("score").innerHTML = score;
+            randomizeAnswers(buttonsArr, countriesArr);
+          };
+        }
+        randomButton.textContent = randomCountry.name;
+        randomButton.onclick = () => {
+          score++;
+          document.getElementById("score").innerHTML = score;
+          randomizeAnswers(buttonsArr, countriesArr);
+        };
+      }
+    </script>
   </body>
 </html>
