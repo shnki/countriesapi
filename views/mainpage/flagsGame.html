@@ -6,7 +6,12 @@
     <title>Flagy Game</title>
     <style>
       body {
-        background-color: brown;
+        background: rgb(15, 9, 80);
+      }
+      .layout {
+        display: flex;
+        justify-content: center;
+        align-items: center;
       }
       .buttonsContainer {
         padding: 10px;
@@ -15,35 +20,137 @@
         gap: 5px;
       }
       .buttonsContainer button {
+        background-color: #fcfcfd;
         width: 360px;
         padding: 10px;
+        height: 4rem;
+        font-size: 1rem;
+        font-family: "JetBrains Mono", monospace;
       }
+      .buttonsContainer button:hover {
+        width: 360px;
+        padding: 10px;
+        height: 4rem;
+        font-size: 1rem;
+        font-family: "JetBrains Mono", monospace;
+        box-shadow: rgba(45, 35, 66, 0.4) 0 4px 8px,
+          rgba(45, 35, 66, 0.3) 0 7px 13px -3px, #d6d6e7 50 -3px 0 inset;
+        transform: translateY(-2px);
+      }
+
       .container {
         display: flex;
         flex-direction: column;
         justify-content: center;
         align-items: center;
+        max-width: fit-content;
+      }
+      .wrong-answer {
+        background-color: red;
+        transition: background-color 0.3s;
+      }
+      .wrong-answer:disabled,
+      .wrong-answer[disabled] {
+        background-color: red;
+        transition: background-color 0.3s;
+        color: aliceblue;
+      }
+
+      .right-answer {
+        background-color: green;
+        transition: background-color 0.3s;
+      }
+      .right-answer:disabled,
+      .right-answer[disabled] {
+        background-color: green;
+        transition: background-color 0.3s;
+        color: aliceblue;
+      }
+
+      .menuLayout {
+        position: absolute;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        backdrop-filter: blur(10px);
+        height: 100%;
+        width: 100%;
+        visibility: visible;
+      }
+      .menu {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        border: 1px solid red;
+        background-color: chartreuse;
+        padding: 5px;
+        height: 10rem;
+        box-shadow: 5px 10px #366b0180;
+      }
+      .menu h1 {
+        color: peru;
+
+        -webkit-text-stroke-width: 0.5px;
+        -webkit-text-stroke-color: rgb(255, 148, 148);
+      }
+      .menu input {
+        color: cornsilk;
+        background-color: chocolate;
+        width: 5rem;
+        font-family: Impact, Haettenschweiler, "Arial Narrow Bold", sans-serif;
+        font-size: 1rem;
+      }
+      .score {
+        display: flex;
+        justify-content: space-between;
+        flex-direction: row;
+        align-items: center;
+        background-color: aliceblue;
+        width: 100%;
+        border-radius: 0% 0% 10px 10px;
+        box-shadow: 5px 10px #888888;
+      }
+      .score h1 {
+        font-family: sans-serif;
+        color: darkslategrey;
+        padding-inline: 10px;
       }
     </style>
   </head>
   <body>
-    <div class="container">
-      <h1 id="score">socre</h1>
-      <img
-        id="flagImage"
-        alt="Flag image"
-        src="http://localhost:8080/flag/ax"
-        width="360px"
-      />
-      <div class="buttonsContainer">
-        <button id="btn1" onclick="answer(this.id)">me</button>
-        <button id="btn2" onclick="answer(this.id)">click me</button>
-        <button id="btn3" onclick="answer(this.id)">click me</button>
-        <button id="btn4" onclick="answer(this.id)">click me</button>
+    <div class="layout">
+      <div class="container">
+        <div class="menuLayout" id="menuLayout">
+          <div class="menu">
+            <h1 id="startMsg">Guess the Country by the Flag</h1>
+            <input id="start" type="button" value="Start" onclick="start()" />
+          </div>
+        </div>
+
+        <div class="score">
+          <h1 id="score">Score:0</h1>
+          <h1 id="lives">0/25</h1>
+        </div>
+        <img
+          id="flagImage"
+          alt="Flag image"
+          src="http://localhost:8080/flag/ax"
+          width="360px"
+          height="230px"
+        />
+        <div class="buttonsContainer">
+          <button id="btn1" onclick="answer(this.id)">me</button>
+          <button id="btn2" onclick="answer(this.id)">click me</button>
+          <button id="btn3" onclick="answer(this.id)">click me</button>
+          <button id="btn4" onclick="answer(this.id)">click me</button>
+        </div>
       </div>
     </div>
+
     <script>
       let score = 0;
+      let progress = 0;
       async function getCountries() {
         const response = await fetch("api/countries/all");
         const countries = await response.json();
@@ -57,6 +164,7 @@
       getCountries();
 
       function randomizeAnswers(buttonsArr, countriesArr) {
+        checkProgress();
         const flagImage = document.getElementById("flagImage");
         const randomCountry =
           countriesArr[Math.floor(Math.random() * countriesArr.length)];
@@ -71,7 +179,7 @@
         wrongAnswerCountries = countriesArr.filter(
           (country) => country !== randomCountry
         );
-
+        allButtons = document.getElementsByTagName("button");
         const randomizedWrongAnswerCountries = wrongAnswerCountries
           .sort(() => Math.random() - 0.5)
           .slice(0, 3);
@@ -80,17 +188,69 @@
           wrongAnswerButtons[i].textContent =
             randomizedWrongAnswerCountries[i].name;
           wrongAnswerButtons[i].onclick = () => {
-            score--;
-            document.getElementById("score").innerHTML = score;
-            randomizeAnswers(buttonsArr, countriesArr);
+            disableButtons(allButtons);
+
+            wrongAnswerButtons[i].classList.add("wrong-answer");
+            randomButton.classList.add("right-answer");
+            setTimeout(() => {
+              enableButtons(allButtons);
+              wrongAnswerButtons[i].classList.remove("wrong-answer");
+              randomButton.classList.remove("right-answer");
+
+              randomizeAnswers(buttonsArr, countriesArr);
+            }, 1200);
           };
         }
         randomButton.textContent = randomCountry.name;
         randomButton.onclick = () => {
+          disableButtons(allButtons);
           score++;
-          document.getElementById("score").innerHTML = score;
-          randomizeAnswers(buttonsArr, countriesArr);
+          randomButton.classList.add("right-answer");
+          setTimeout(() => {
+            enableButtons(allButtons);
+            randomButton.classList.remove("right-answer");
+            randomizeAnswers(buttonsArr, countriesArr);
+          }, 1200);
+          document.getElementById("score").innerHTML = "Score:" + score;
         };
+      }
+
+      function disableButtons(buttons) {
+        for (const button of buttons) {
+          button.disabled = true;
+        }
+      }
+
+      function enableButtons(buttons) {
+        for (const button of buttons) {
+          button.disabled = false;
+        }
+      }
+      function start() {
+        document.getElementById("menuLayout").style.visibility = "hidden";
+      }
+      function checkProgress() {
+        if (progress < 25) {
+          progress++;
+          document.getElementById("lives").innerHTML = progress + "/25";
+        } else {
+          document.getElementById(
+            "startMsg"
+          ).innerHTML = `Your Score is ${score}`;
+          document.getElementById("start").value = "Play Again";
+          document.getElementById("start").onclick = () => {
+            startOver();
+          };
+          document.getElementById("menuLayout").style.visibility = "visible";
+        }
+      }
+      function startOver() {
+        score = 0;
+        progress = 0;
+        document.getElementById("score").innerHTML = "Score:" + score;
+        document.getElementById("menuLayout").style.visibility = "hidden";
+
+        randomizeAnswers();
       }
     </script>
   </body>
