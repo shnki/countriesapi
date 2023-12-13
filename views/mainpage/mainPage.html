@@ -134,11 +134,19 @@
         </code></pre>
       <div class="game">
         <h1>Do you think you know much about flags ?</h1>
-        <button>TEST YOUR KNOWLEDGE</button>
+        <button id="knowledgeTestBtn">TEST YOUR KNOWLEDGE</button>
       </div>
     </div>
     <div id="countriesSpace"></div>
     <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        var testKnowledgeBtn = document.getElementById("knowledgeTestBtn");
+        testKnowledgeBtn.addEventListener("click", function () {
+          var hostname = window.location.hostname;
+          window.location.href = "https://" + hostname + "/flagygame";
+        });
+      });
+
       console.log(location.protocol + "//" + location.host);
       let hostname = location.hostname;
       document.getElementById("heroText").innerHTML =
